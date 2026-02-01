@@ -880,19 +880,32 @@ function isPointOnLand(x, y) {
 // --- Data Sync ---
 
 function connectSSE() {
-    const evtSource = new EventSource('/api/stream');
-    evtSource.onopen = () => {
-        statusDiv.textContent = '● Live';
-        statusDiv.style.color = '#81c784';
+    // Vercel Serverless environment doesn't support persistent long-running SSE connections well.
+    // We will switch to polling for reliability on Vercel deployment.
+    
+    const poll = async () => {
+        try {
+            const response = await fetch('/api/world-state');
+            if (response.ok) {
+                const data = await response.json();
+                handleWorldUpdate(data);
+                statusDiv.textContent = '● Live';
+                statusDiv.style.color = '#81c784';
+            } else {
+                throw new Error('Network response was not ok');
+            }
+        } catch (error) {
+            console.error('Polling error:', error);
+            statusDiv.textContent = '○ Reconnecting';
+            statusDiv.style.color = '#ff9800';
+        }
+        
+        // Schedule next poll
+        setTimeout(poll, 5000); // 5 seconds interval
     };
-    evtSource.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-        handleWorldUpdate(data);
-    };
-    evtSource.onerror = (err) => {
-        statusDiv.textContent = '○ Reconnecting';
-        statusDiv.style.color = '#ff9800';
-    };
+
+    // Start polling
+    poll();
 }
 
 function handleWorldUpdate(state) {
