@@ -967,3 +967,16 @@ function getColorFromSymbol(symbol) {
 
 // Start
 initGame();
+
+// Clipboard Logic for Ticker
+document.addEventListener('click', (e) => {
+    if (e.target.classList.contains('copy-ca')) {
+        const text = e.target.getAttribute('data-val') || e.target.textContent;
+        navigator.clipboard.writeText(text).then(() => {
+            const original = e.target.textContent;
+            e.target.textContent = "COPIED!";
+            setTimeout(() => e.target.textContent = original, 1000);
+        });
+    }
+});
+
