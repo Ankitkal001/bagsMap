@@ -7,6 +7,9 @@ const config = {
         width: '100%',
         height: '100%'
     },
+    input: {
+        activePointers: 3 // Enable Multi-touch (1 mouse + 2 fingers)
+    },
     backgroundColor: '#87CEEB',
     physics: {
         default: 'arcade',
@@ -308,24 +311,25 @@ function create() {
     let initialPinchDistance = null;
     let initialZoom = 1;
 
+    // We rely on standard pointer events for pinch
+    // Pointer1 + Pointer2 logic in pointermove
+
     this.input.on('pointerdown', (pointer) => {
-        if (pointer.button === 0) {
-            // Only start drag logic if we didn't just click a UI element (which we can't detect easily here, 
-            // but the gameobjectdown fires before this if the sprite is top).
-            // Actually, we'll just track start position.
-            isDragging = false;
-            startX = pointer.x;
-            startY = pointer.y;
-        }
-        
-        // Handle Pinch Zoom Start
+        // If we have 2 pointers down, start pinching
         if (this.input.pointer1.isDown && this.input.pointer2.isDown) {
-            isDragging = false; // Disable dragging during pinch
+            isDragging = false;
             initialPinchDistance = Phaser.Math.Distance.Between(
                 this.input.pointer1.x, this.input.pointer1.y,
                 this.input.pointer2.x, this.input.pointer2.y
             );
             initialZoom = this.cameras.main.zoom;
+            return;
+        }
+
+        if (pointer.button === 0) {
+            isDragging = false;
+            startX = pointer.x;
+            startY = pointer.y;
         }
     });
 
@@ -337,13 +341,17 @@ function create() {
                     this.input.pointer1.x, this.input.pointer1.y,
                     this.input.pointer2.x, this.input.pointer2.y
                 );
-                const zoomFactor = currentDistance / initialPinchDistance;
-                this.cameras.main.setZoom(Phaser.Math.Clamp(initialZoom * zoomFactor, 0.4, 2));
+                // Protect against 0 distance
+                if (initialPinchDistance > 0) {
+                    const zoomFactor = currentDistance / initialPinchDistance;
+                    this.cameras.main.setZoom(Phaser.Math.Clamp(initialZoom * zoomFactor, 0.4, 2));
+                }
             }
             return; // Skip drag logic
         }
 
         if (pointer.isDown && pointer.button === 0) {
+            // Drag logic
             const dist = Phaser.Math.Distance.Between(pointer.x, pointer.y, startX, startY);
             if (dist > dragThreshold) {
                 isDragging = true;
@@ -354,11 +362,11 @@ function create() {
     });
     
     this.input.on('pointerup', () => {
-        isDragging = false;
-        // Reset pinch
+        // Check if we just released one of the pinch fingers
         if (!this.input.pointer1.isDown || !this.input.pointer2.isDown) {
             initialPinchDistance = null;
         }
+        isDragging = false;
     });
 
     // Wire up Modal Close
