@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bags Town</title>
+    <link rel="stylesheet" href="style.css?v=6">
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.min.js"></script>
+</head>
+<body>
+    <div class="retro-background">
+        <div class="grid-overlay"></div>
+    </div>
+
+    <div class="terminal-container">
+        <div class="terminal-header">
+            <div class="terminal-title">
+                <span class="blink">█</span> BAGS_TOWN.EXE
+            </div>
+            <div class="window-controls">
+                <button class="win-btn minimize">_</button>
+                <button class="win-btn maximize" id="btn-fullscreen">□</button>
+                <button class="win-btn close">×</button>
+            </div>
+        </div>
+        
+        <div class="monitor-screen" id="game-container">
+            <div class="scanline-overlay"></div>
+            
+            <div id="ui-layer">
+                <div class="navbar">
+                    <div class="logo">
+                        <h1>BAGS TOWN</h1>
+                    </div>
+                    <div class="search-container">
+                        <input type="text" id="search-input" placeholder="SEARCH_PROJECT...">
+                    </div>
+                    <div class="status" id="connection-status">CONNECTING...</div>
+                </div>
+                
+                <!-- Project Detail Modal -->
+                <div id="project-modal" class="hidden">
+                    <div class="modal-content">
+                        <button id="close-modal">×</button>
+                        
+                        <div class="modal-header">
+                            <img id="modal-icon" src="" alt="" class="modal-icon">
+                            <div class="modal-title-group">
+                                <div class="title-row">
+                                    <h2 id="modal-symbol">SYMBOL</h2>
+                                    <span class="rank-badge">RANK #<span id="modal-rank">--</span></span>
+                                </div>
+                                <div id="modal-name" class="modal-subtitle">Project Name</div>
+                                <div class="creator-row">
+                                    <span>BY</span>
+                                    <img id="creator-pfp" src="" class="creator-pfp hidden">
+                                    <span id="creator-name">@creator</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="stats-grid">
+                            <div class="stat-box">
+                                <div class="stat-label">PERFORMANCE</div>
+                                <div class="stat-value" id="modal-performance">0%</div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="stat-label">LIFETIME FEES</div>
+                                <div class="stat-value" id="modal-fees">◎0</div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="stat-label">PRICE</div>
+                                <div class="stat-value" id="modal-price">$0</div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="stat-label">MARKET CAP</div>
+                                <div class="stat-value" id="modal-mcap">$0</div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="stat-label">VOLUME (24H)</div>
+                                <div class="stat-value" id="modal-volume">◎0</div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="stat-label">HOLDERS</div>
+                                <div class="stat-value" id="modal-holders">0</div>
+                            </div>
+                        </div>
+
+                        <div class="contract-section">
+                            <div class="stat-label">CONTRACT ADDRESS</div>
+                            <div class="address-row">
+                                <code id="modal-address">...</code>
+                                <a id="modal-link" href="#" target="_blank" class="external-link">↗</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <canvas id="town-canvas"></canvas>
+        </div>
+    </div>
+
+    <script src="js/game.js"></script>
+</body>
+</html>
